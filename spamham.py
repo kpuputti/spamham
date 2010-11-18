@@ -30,12 +30,13 @@ def usage():
 
 
 def read_data(file_name):
-    """Read the space separated data of integers from the given file."""
+    """Read the space separated data from the given file."""
     data = []
     with open(file_name) as f:
         for line in f:
             datum = line.strip().split()
             if datum[1] == 'nan':
+                # If the label is unknown, it is marked as 'nan'.
                 data.append([datum[0]] + [None] + datum[2:])
             else:
                 data.append([int(d) for d in datum])
