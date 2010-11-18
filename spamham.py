@@ -37,7 +37,9 @@ def read_data(file_name):
             datum = line.strip().split()
             if datum[1] == 'nan':
                 # If the label is unknown, it is marked as 'nan'.
-                data.append([datum[0]] + [None] + datum[2:])
+                converted = [int(datum[0])] + [None] + \
+                            [int(d) for d in datum[2:]]
+                data.append(converted)
             else:
                 data.append([int(d) for d in datum])
 
