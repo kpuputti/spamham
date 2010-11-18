@@ -1,0 +1,5 @@
+Spamham spam classifier
+=======================
+
+Script to classify spam from ham (not spam) using some machine
+learning methods.
