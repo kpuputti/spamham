@@ -29,6 +29,10 @@ class SpamhamTest(unittest.TestCase):
                                      'train', 'data', 'output'])
         self.assertRaises(spamham.UnknownClassifierError, func)
 
+    def test_main__with_unknown_method(self):
+        """Test the return value with an unknown method."""
+        self.assertEquals(spamham.main(['unknown', 'arg1', 'arg2']), 1)
+
 
 class ClassifierTest(unittest.TestCase):
 
