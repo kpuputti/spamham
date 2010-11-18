@@ -40,17 +40,18 @@ class ClassifierTest(unittest.TestCase):
         """Test that the split returns the correct amount of items."""
         data = get_data(5)
         classifier = classifiers.Classifier([])
-        trainset, testset = classifier.split_data(data)
-        self.assertEquals(len(data), len(trainset) + len(testset))
+        trainset, validationset, testset = classifier.split_data(data)
+        self.assertEquals(len(data),
+                          len(trainset) + len(validationset) + len(testset))
 
     def test_split_data__items(self):
         """Test that the split returns all and noting but the original
         items."""
         data = get_data(20)
         classifier = classifiers.Classifier([])
-        trainset, testset = classifier.split_data(data)
-        ids = set(d[0] for d in data)
-        self.assertEquals(ids, trainset | testset)
+        trainset, validationset, testset = classifier.split_data(data)
+        combined = sorted(trainset + validationset + testset)
+        self.assertEquals(data, combined)
 
 
 if __name__ == '__main__':
