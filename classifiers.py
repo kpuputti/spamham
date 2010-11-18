@@ -46,6 +46,30 @@ class RandomClassifier(Classifier):
         return random.choice((True, False))
 
 
+class AllSpamClassifier(Classifier):
+    """Classify all data as spam."""
+
+    name = 'all spam classifier'
+
+    def train(self):
+        pass
+
+    def classify(self, datum):
+        return True
+
+
+class AllHamClassifier(Classifier):
+    """Classify all data as ham."""
+
+    name = 'all ham classifier'
+
+    def train(self):
+        pass
+
+    def classify(self, datum):
+        return False
+
+
 class SVMClassifier(Classifier):
     """Classify the data using Support Vector Machines."""
 
