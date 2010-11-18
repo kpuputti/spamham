@@ -8,15 +8,22 @@ class Classifier(object):
 
     def __init__(self, data):
         self.data = data
-        self.trainset, self.testset = self.split_data(data)
+        self.trainset, self.validationset, self.testset = self.split_data(data)
 
     def split_data(self, data):
-        """Split the data set randomly into two sets of ids from the
-        first column of the data set."""
-        ids = set(d[0] for d in data)
-        trainset = set(random.sample(ids, len(ids) / 2))
-        testset = ids - trainset
-        return trainset, testset
+        """Split the data set into training, validation, and test
+        sets."""
+        trainset = []
+        validationset = []
+        testset = []
+        for datum in data:
+            if datum[1] is None:
+                testset.append(datum)
+            elif random.choice((True, False)):
+                trainset.append(datum)
+            else:
+                validationset.append(datum)
+        return trainset, validationset, testset
 
     def train(self):
         raise NotImplementedError('Implement this method in a derived class.')
