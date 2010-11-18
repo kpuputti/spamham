@@ -29,12 +29,46 @@ def usage():
     print __doc__
 
 
+def read_data(file_name):
+    """Read the space separated data of integers from the given file."""
+    data = []
+    with open(file_name) as f:
+        for line in f:
+            datum = line.strip().split()
+            if datum[1] == 'nan':
+                data.append([datum[0]] + [None] + datum[2:])
+            else:
+                data.append([int(d) for d in datum])
+
+    return data
+
+
 def train(classifier_name, data_file):
     if not hasattr(classifiers, classifier_name):
         raise UnknownClassifierError('Unknown classifier: %s' % classifier_name)
-    classifier = getattr(classifiers, classifier_name)(data_file)
+    data = read_data(data_file)
+    classifier = getattr(classifiers, classifier_name)(data)
     print 'Training classifier:', classifier.name
     classifier.train()
+
+    correct = 0
+    incorrect = 0
+    for datum in classifier.validationset:
+        is_spam = datum[1]
+        if classifier.classify(datum) == is_spam:
+            correct += 1
+        else:
+            incorrect += 1
+
+    correct_percentage = 100 * float(correct) / (correct + incorrect)
+
+    # Print statistics of the classification.
+    print '== Training output for classifier:', classifier.name, ' =='
+    print 'total data length:', len(data)
+    print 'test data length:', len(classifier.validationset)
+    print 'correct:', correct
+    print 'incorrect:', incorrect
+    print 'correctness percentage: %.2f%%' % correct_percentage
 
 
 def classify(classifier_name, train_file, data_file, output_file):
