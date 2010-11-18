@@ -7,7 +7,6 @@ class Classifier(object):
     name = 'base classifier'
 
     def __init__(self, data):
-        self.data = data
         self.trainset, self.validationset, self.testset = self.split_data(data)
 
     def split_data(self, data):

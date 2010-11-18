@@ -5,7 +5,7 @@ spamham.py - spam/ham classifier
 python spamham.py [method] [args]
 
 where [method] is the task to be done (see below), and [args] is the
-arguments for the task.
+list of arguments for the task.
 
 == Methods: ==
 1. Train the classifier with a data file and output its success:
