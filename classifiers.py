@@ -89,9 +89,9 @@ class DummyClassifier(Classifier):
     # datum to be a spam datum.
     SPAM_FIELDS_FREQ = 0.5
 
-    def __init__(self, data):
+    def __init__(self, data, classify=False):
         self.spam_colums = None
-        super(DummyClassifier, self).__init__(data)
+        super(DummyClassifier, self).__init__(data, classify)
 
     def train(self):
         logger.debug('Training classifier: ' + self.name)

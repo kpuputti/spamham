@@ -88,10 +88,15 @@ def classify(classifier_name, train_file, data_file, output_file):
     if not classifier_name.endswith('Classifier') \
            or not hasattr(classifiers, classifier_name):
         raise UnknownClassifierError('Unknown classifier: %s' % classifier_name)
-    logger.info('Classifying data with classifier:' +classifier_name)
-    classifier = getattr(classifiers, classifier_name)(train_file, classify=True)
+    logger.info('Classifying data with classifier:' + classifier_name)
+    traindata = read_data(train_file)
+    classifier = getattr(classifiers, classifier_name)(traindata, classify=True)
     classifier.train()
     data = read_data(data_file)
+    with open(output_file, 'w') as out:
+        for datum in data:
+            is_spam = classifier.classify(datum)
+            out.write('%d %d\n' % (datum[0], is_spam))
 
 
 def validate(output_file, labeled_file):
@@ -118,6 +123,7 @@ def main(args):
         usage()
         return 1
 
+    print 'Done.'
     return 0
 
 
