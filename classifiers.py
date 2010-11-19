@@ -69,6 +69,18 @@ class AllHamClassifier(Classifier):
         return False
 
 
+class DummyClassifier(Classifier):
+    """Uses some dummy logic for classification."""
+
+    name = 'dummy classifier'
+
+    def train(self):
+        pass
+
+    def classify(self, datum):
+        pass
+
+
 class SVMClassifier(Classifier):
     """Classify the data using Support Vector Machines."""
 
