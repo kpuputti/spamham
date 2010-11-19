@@ -94,6 +94,7 @@ def classify(classifier_name, train_file, data_file, output_file):
     classifier = getattr(classifiers, classifier_name)(traindata, classify=True)
     classifier.train()
     data = read_data(data_file)
+    logger.info('Writing classification results to file: ' + output_file)
     with open(output_file, 'w') as out:
         for datum in data:
             is_spam = classifier.classify(datum)
@@ -107,15 +108,23 @@ def validate(output_file, labeled_file):
     assert len(output) == len(labeled)
     datums = len(output)
     matches = 0
+    false_positives = 0
     for d1, d2 in itertools.izip(output, labeled):
         assert d1[0] == d2[0], 'Datum ids must match!'
-        if d1[1] == d2[1]:
+        outlabel = d1[1]
+        labeled_label = d2[1]
+        if outlabel == labeled_label:
             matches += 1
+        elif outlabel and not labeled_label:
+            false_positives += 1
 
     print '== Validation output: =='
     print 'datums:', datums
-    print 'matches:', matches
-    print 'correctness percentage: %.2f%%' % (100 * float(matches) / datums)
+    print 'accurate matches:', matches
+    print 'accuracy percentage: %.2f%%' % (100 * float(matches) / datums)
+    print 'false positives:', false_positives
+    print 'false positive percentage: %.2f%%' \
+          % (100 * float(false_positives) / datums)
 
 
 def main(args):
