@@ -17,6 +17,7 @@ python spamham.py classify [classifier] [train_file] [data_file] [output_file]
 3. Validate generated output file against a labeled data file:
 python spamham.py validate [output_file] [labled_file]"""
 import classifiers
+import itertools
 import logging
 import sys
 
@@ -101,6 +102,20 @@ def classify(classifier_name, train_file, data_file, output_file):
 
 def validate(output_file, labeled_file):
     logger.info('Validating classified output file:' + output_file)
+    output = read_data(output_file)
+    labeled = read_data(labeled_file)
+    assert len(output) == len(labeled)
+    datums = len(output)
+    matches = 0
+    for d1, d2 in itertools.izip(output, labeled):
+        assert d1[0] == d2[0], 'Datum ids must match!'
+        if d1[1] == d2[1]:
+            matches += 1
+
+    print '== Validation output: =='
+    print 'datums:', datums
+    print 'matches:', matches
+    print 'correctness percentage: %.2f%%' % (100 * float(matches) / datums)
 
 
 def main(args):
