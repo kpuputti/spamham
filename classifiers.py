@@ -1,5 +1,9 @@
 import collections
+import logging
 import random
+
+
+logger = logging.getLogger('classifiers')
 
 
 class Classifier(object):
@@ -8,12 +12,14 @@ class Classifier(object):
     name = 'base classifier'
 
     def __init__(self, data, classify=False):
+        logging.debug('Creating classifier: ' + self.name)
         self.classify_mode = classify
         self.trainset, self.validationset, self.testset = self.split_data(data)
 
     def split_data(self, data):
         """Split the data set into training, validation, and test
         sets."""
+        logger.debug('Splitting the training data.')
         trainset = []
         validationset = []
         testset = []
@@ -88,6 +94,7 @@ class DummyClassifier(Classifier):
         super(DummyClassifier, self).__init__(data)
 
     def train(self):
+        logger.debug('Training classifier: ' + self.name)
         num_spams = 0
         spam_columns = collections.defaultdict(int)
         for datum in self.trainset:

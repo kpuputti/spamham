@@ -17,7 +17,14 @@ python spamham.py classify [classifier] [train_file] [data_file] [output_file]
 3. Validate generated output file against a labeled data file:
 python spamham.py validate [output_file] [labled_file]"""
 import classifiers
+import logging
 import sys
+
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(name)s %(levelname)s: %(message)s',
+                    stream=sys.stdout)
+logger = logging.getLogger('spamham')
 
 
 class UnknownClassifierError(Exception):
@@ -31,6 +38,7 @@ def usage():
 
 def read_data(file_name):
     """Read the space separated data from the given file."""
+    logger.info('Reading data from file: ' + file_name)
     data = []
     with open(file_name) as f:
         for line in f:
@@ -49,7 +57,7 @@ def train(classifier_name, data_file):
     if not classifier_name.endswith('Classifier') \
            or not hasattr(classifiers, classifier_name):
         raise UnknownClassifierError('Unknown classifier: %s' % classifier_name)
-    print 'Training classifier:', classifier_name
+    logger.info('Training classifier: ' + classifier_name)
     data = read_data(data_file)
     classifier = getattr(classifiers, classifier_name)(data)
     classifier.train()
@@ -68,7 +76,9 @@ def train(classifier_name, data_file):
     # Print statistics of the classification.
     print '== Training output for classifier:', classifier.name, ' =='
     print 'total data length:', len(data)
-    print 'test data length:', len(classifier.validationset)
+    print 'train data length:', len(classifier.trainset)
+    print 'validation data length:', len(classifier.validationset)
+    print 'test data length:', len(classifier.testset)
     print 'correct:', correct
     print 'incorrect:', incorrect
     print 'correctness percentage: %.2f%%' % correct_percentage
@@ -78,13 +88,14 @@ def classify(classifier_name, train_file, data_file, output_file):
     if not classifier_name.endswith('Classifier') \
            or not hasattr(classifiers, classifier_name):
         raise UnknownClassifierError('Unknown classifier: %s' % classifier_name)
-    print 'Classifying data with classifier:', classifier_name
+    logger.info('Classifying data with classifier:' +classifier_name)
     classifier = getattr(classifiers, classifier_name)(train_file, classify=True)
     classifier.train()
+    data = read_data(data_file)
 
 
 def validate(output_file, labeled_file):
-    print 'Validating classified output file:', output_file
+    logger.info('Validating classified output file:' + output_file)
 
 
 def main(args):
