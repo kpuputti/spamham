@@ -46,11 +46,12 @@ def read_data(file_name):
 
 
 def train(classifier_name, data_file):
-    if not hasattr(classifiers, classifier_name):
+    if not classifier_name.endswith('Classifier') \
+           or not hasattr(classifiers, classifier_name):
         raise UnknownClassifierError('Unknown classifier: %s' % classifier_name)
+    print 'Training classifier:', classifier_name
     data = read_data(data_file)
     classifier = getattr(classifiers, classifier_name)(data)
-    print 'Training classifier:', classifier.name
     classifier.train()
 
     correct = 0
@@ -74,7 +75,8 @@ def train(classifier_name, data_file):
 
 
 def classify(classifier_name, train_file, data_file, output_file):
-    if not hasattr(classifiers, classifier_name):
+    if not classifier_name.endswith('Classifier') \
+           or not hasattr(classifiers, classifier_name):
         raise UnknownClassifierError('Unknown classifier: %s' % classifier_name)
     classifier = getattr(classifiers, classifier_name)(data_file)
     print 'Classifying data with classifier:', classifier.name
