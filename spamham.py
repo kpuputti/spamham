@@ -78,8 +78,9 @@ def classify(classifier_name, train_file, data_file, output_file):
     if not classifier_name.endswith('Classifier') \
            or not hasattr(classifiers, classifier_name):
         raise UnknownClassifierError('Unknown classifier: %s' % classifier_name)
-    classifier = getattr(classifiers, classifier_name)(data_file)
-    print 'Classifying data with classifier:', classifier.name
+    print 'Classifying data with classifier:', classifier_name
+    classifier = getattr(classifiers, classifier_name)(train_file, classify=True)
+    classifier.train()
 
 
 def validate(output_file, labeled_file):

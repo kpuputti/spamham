@@ -7,7 +7,8 @@ class Classifier(object):
 
     name = 'base classifier'
 
-    def __init__(self, data):
+    def __init__(self, data, classify=False):
+        self.classify_mode = classify
         self.trainset, self.validationset, self.testset = self.split_data(data)
 
     def split_data(self, data):
@@ -19,7 +20,7 @@ class Classifier(object):
         for datum in data:
             if datum[1] is None:
                 testset.append(datum)
-            elif random.choice((True, False)):
+            elif self.classify_mode or random.choice((True, False)):
                 trainset.append(datum)
             else:
                 validationset.append(datum)
