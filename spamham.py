@@ -65,14 +65,19 @@ def train(classifier_name, data_file):
 
     correct = 0
     incorrect = 0
+    false_positives = 0
     for datum in classifier.validationset:
         is_spam = datum[1]
-        if classifier.classify(datum) == is_spam:
+        label = classifier.classify(datum)
+        if label  == is_spam:
             correct += 1
         else:
             incorrect += 1
+            if label and not is_spam:
+                false_positives += 1
 
     correct_percentage = 100 * float(correct) / (correct + incorrect)
+    fpos_percentage = 100 * float(false_positives) / (correct + incorrect)
 
     # Print statistics of the classification.
     print '== Training output for classifier:', classifier.name, ' =='
@@ -83,6 +88,7 @@ def train(classifier_name, data_file):
     print 'correct:', correct
     print 'incorrect:', incorrect
     print 'correctness percentage: %.2f%%' % correct_percentage
+    print 'false positive percentage: %.2f%%' % (fpos_percentage)
 
 
 def classify(classifier_name, train_file, data_file, output_file):
