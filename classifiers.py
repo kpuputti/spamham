@@ -130,10 +130,13 @@ class SVMClassifier(Classifier):
 
     name = 'SVM classifier'
 
-    def __init__(self, data, classify=False):
+    def __init__(self, data, classify=False, C=None):
         super(SVMClassifier, self).__init__(data, classify)
         self.convert_data()
-        self.svm = PyML.SVM()
+        if C is None:
+            self.svm = PyML.SVM()
+        else:
+            self.svm = PyML.SVM(C=C)
 
     def convert_data(self):
         """Convert the data sets into a form expected by PyML."""
@@ -154,3 +157,9 @@ class SVMClassifier(Classifier):
         test_datum = PyML.VectorDataSet([cols])
         is_spam = self.svm.classify(test_datum, 0)
         return bool(is_spam[0])
+
+class DerivedSVMClassifier(SVMClassifier):
+
+    def __init__(self, data, classify=False):
+        C = 0.1
+        super(DerivedSVMClassifier, self).__init__(data, classify, C)
