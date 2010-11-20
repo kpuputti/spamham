@@ -47,7 +47,8 @@ def read_data(file_name):
             if datum[1] == 'nan':
                 # If the label is unknown, it is marked as 'nan'.
                 datum[1] = None
-                data.append([int(d) for d in datum if d is not None])
+                data.append([int(datum[0])] + [None] + \
+                            [int(d) for d in datum[2:]])
             else:
                 data.append([int(d) for d in datum])
 
@@ -63,21 +64,30 @@ def train(classifier_name, data_file):
     classifier = getattr(classifiers, classifier_name)(data)
     classifier.train()
 
+    spams = 0
+    classified_spams = 0
+    correct_spams = 0
     correct = 0
     incorrect = 0
-    false_positives = 0
+
     for datum in classifier.validationset:
         is_spam = datum[1]
         label = classifier.classify(datum)
-        if label  == is_spam:
+        if is_spam:
+            spams += 1
+        if label:
+            classified_spams += 1
+
+        if label == is_spam:
             correct += 1
+            if is_spam:
+                correct_spams += 1
         else:
             incorrect += 1
-            if label and not is_spam:
-                false_positives += 1
 
-    correct_percentage = 100 * float(correct) / (correct + incorrect)
-    fpos_percentage = 100 * float(false_positives) / (correct + incorrect)
+    accuracy = 100 * float(correct) / (correct + incorrect)
+    precision = 100 * float(correct_spams) / classified_spams
+    recall = 100 * float(correct_spams) / spams
 
     # Print statistics of the classification.
     print '== Training output for classifier:', classifier.name, ' =='
@@ -87,8 +97,9 @@ def train(classifier_name, data_file):
     print 'test data length:', len(classifier.testset)
     print 'correct:', correct
     print 'incorrect:', incorrect
-    print 'correctness percentage: %.2f%%' % correct_percentage
-    print 'false positive percentage: %.2f%%' % (fpos_percentage)
+    print 'accuracy: %.2f%%' % accuracy
+    print 'precision: %.2f%%' % precision
+    print 'recall: %.2f%%' % recall
 
 
 def classify(classifier_name, train_file, data_file, output_file):
@@ -112,25 +123,42 @@ def validate(output_file, labeled_file):
     output = read_data(output_file)
     labeled = read_data(labeled_file)
     assert len(output) == len(labeled)
+
+    spams = 0
+    classified_spams = 0
+    correct_spams = 0
+    correct = 0
+    incorrect = 0
     datums = len(output)
-    matches = 0
-    false_positives = 0
+
     for d1, d2 in itertools.izip(output, labeled):
         assert d1[0] == d2[0], 'Datum ids must match!'
         outlabel = d1[1]
         labeled_label = d2[1]
+
+        if labeled_label:
+            spams += 1
+        if outlabel:
+            classified_spams += 1
+
         if outlabel == labeled_label:
-            matches += 1
-        elif outlabel and not labeled_label:
-            false_positives += 1
+            correct += 1
+            if outlabel:
+                correct_spams += 1
+        else:
+            incorrect += 1
+
+    accuracy = 100 * float(correct) / (correct + incorrect)
+    precision = 100 * float(correct_spams) / classified_spams
+    recall = 100 * float(correct_spams) / spams
 
     print '== Validation output: =='
     print 'datums:', datums
-    print 'accurate matches:', matches
-    print 'accuracy percentage: %.2f%%' % (100 * float(matches) / datums)
-    print 'false positives:', false_positives
-    print 'false positive percentage: %.2f%%' \
-          % (100 * float(false_positives) / datums)
+    print 'correct:', correct
+    print 'incorrect:', incorrect
+    print 'accuracy: %.2f%%' % accuracy
+    print 'precision: %.2f%%' % precision
+    print 'recall: %.2f%%' % recall
 
 
 def main(args):
