@@ -1,3 +1,4 @@
+import PyML
 import collections
 import logging
 import random
@@ -129,8 +130,27 @@ class SVMClassifier(Classifier):
 
     name = 'SVM classifier'
 
-    def train(self):
-        pass
+    def __init__(self, data, classify=False):
+        super(SVMClassifier, self).__init__(data, classify)
+        self.convert_data()
+        self.svm = PyML.SVM()
 
-    def classify(self):
-        pass
+    def convert_data(self):
+        """Convert the data sets into a form expected by PyML."""
+        logger.info('Converting classifier data into PyML format.')
+        data = []
+        for datum in self.trainset:
+            data.append([int(d) for d in datum[2:]])
+        svm_trainset = PyML.VectorDataSet(data)
+        labels = PyML.Labels([str(d[1]) for d in self.trainset])
+        svm_trainset.attachLabels(labels)
+        self.svm_trainset = svm_trainset
+
+    def train(self):
+        self.svm.train(self.svm_trainset)
+
+    def classify(self, datum):
+        cols = [int(d) for d in datum[2:]]
+        test_datum = PyML.VectorDataSet([cols])
+        is_spam = self.svm.classify(test_datum, 0)
+        return bool(is_spam[0])
