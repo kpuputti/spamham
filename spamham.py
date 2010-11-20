@@ -149,7 +149,10 @@ def validate(output_file, labeled_file):
             incorrect += 1
 
     accuracy = 100 * float(correct) / (correct + incorrect)
-    precision = 100 * float(correct_spams) / classified_spams
+    if classified_spams:
+        precision = 100 * float(correct_spams) / classified_spams
+    else:
+        precision = 0
     recall = 100 * float(correct_spams) / spams
 
     print '== Validation output: =='
